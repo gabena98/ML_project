@@ -12,7 +12,7 @@ library(MLmetrics)
 
 #monk 1
 #cambiare il path per eseguire su altri computer
-monk_train_1=read.table("/Users/gabrielebenanti/Documents/MONK/monks-1.train", header = FALSE, sep = "", dec = ".")
+monk_train_1=read.table("./MONK/monks-1.train", header = FALSE, sep = "", dec = ".")
 #controllo se esistono valori NA
 colSums(is.na(monk_train_1))
 # creo input - output train
@@ -23,7 +23,7 @@ train_input_1 = monk_train_1[split_id$train,c(-1,-8)]
 validation_input_1 = monk_train_1[split_id$valid,c(-1,-8)]
 validation_output_1 = monk_train_1[split_id$valid,1]
 # creo input - output test
-monk_test_1 = read.table("/Users/gabrielebenanti/Documents/MONK/monks-1.test", header = FALSE, sep = "", dec = ".")
+monk_test_1 = read.table("./MONK/monks-1.test", header = FALSE, sep = "", dec = ".")
 colSums(is.na((monk_test_1)))
 test_output_1 = monk_test_1$V1
 test_input_1 = subset(monk_test_1,select = c(-V1,-V8))
@@ -31,8 +31,19 @@ test_input_1 = subset(monk_test_1,select = c(-V1,-V8))
 #setto seme per riprodurre la CV ogni volta
 #provare a vedere se si può cambiare iperparametri, es KSVM (vedi slide 9 SVM-other-info)
 set.seed(3)
+tune_ranger = list(num.trees = 500,
+                   mtry = floor(sqrt(ncol(train_input_1))),
+                   min.node.size = 1)
+learner_ranger = create.Learner("SL.ranger", tune = tune_ranger, detailed_names = TRUE, name_prefix = "ranger")
+tune_svm_rbf = list(kernel = "rbfdot", sigma = c(0.06, 0.01, 0.1), C = c(0.8, 1, 1.2))
+#tune_svm_poly = list(kernel = "polydot", degree = c(2, 2.5, 3), offset = 1, C = c(0.8, 1, 1.2))
+#tune_svm_poly = list(kernel = "polydot")
+#tune_svm_tanh = list(kernel = "tanhdot")
+learner_svm_rbf = create.Learner("SL.ksvm", tune = tune_svm_rbf, detailed_names = TRUE, name_prefix = "ksvm")
+#learner_svm_poly = create.Learner("SL.ksvm", tune = tune_svm_poly, detailed_names = TRUE, name_prefix = "ksvm")
+#learner_svm_tanh = create.Learner("SL.ksvm", tune = tune_svm_tanh, detailed_names = TRUE, name_prefix = "ksvm")
 sl1 <- SuperLearner(Y = train_output_1, X = train_input_1, newX = validation_input_1, family = binomial(),
-                         SL.library = c("SL.glm","SL.ranger","SL.ksvm"),
+                         SL.library = c("SL.glm", learner_ranger$names, learner_svm_rbf$names),
                          verbose = TRUE,cvControl=list(10,TRUE) ,control = list(TRUE, TRUE))
 sl1
 
@@ -47,40 +58,40 @@ auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.valu
 auc
 
 ### provare a fare risk assessment con CV.Superlearner, forse non serve
-(num_cores = RhpcBLASctl::get_num_cores())
-options(mc.cores = num_cores)
-set.seed(1, "L'Ecuyer-CMRG")
-cv_sl1 = CV.SuperLearner(Y = train_output_1, X = train_input_1, family = binomial(),
-                        cvControl = list(V = 10),parallel = "multicore",saveAll = TRUE,
-                        innerCvControl = list(list(V=10)),SL.library = c("SL.glm", "SL.ranger", "SL.ksvm","SL.knn"),
-                        verbose = TRUE)
-summary(cv_sl1)
-plot(cv_sl1) + theme_bw()
-# Review meta-weights (coefficients) from a CV.SuperLearner object
-review_weights = function(cv_sl) {
-  meta_weights = coef(cv_sl)
-  means = colMeans(meta_weights)
-  sds = apply(meta_weights, MARGIN = 2,  FUN = sd)
-  mins = apply(meta_weights, MARGIN = 2, FUN = min)
-  maxs = apply(meta_weights, MARGIN = 2, FUN = max)
-  # Combine the stats into a single matrix.
-  sl_stats = cbind("mean(weight)" = means, "sd" = sds, "min" = mins, "max" = maxs)
-  # Sort by decreasing mean weight.
-  sl_stats[order(sl_stats[, 1], decreasing = TRUE), ]
-}
-#mostra qual è il miglior modello per ogni fold
-table(simplify2array(cv_sl1$whichDiscreteSL))
-print(review_weights(cv_sl1), digits = 3)
+# (num_cores = RhpcBLASctl::get_num_cores())
+# options(mc.cores = num_cores)
+# set.seed(1, "L'Ecuyer-CMRG")
+# cv_sl1 = CV.SuperLearner(Y = train_output_1, X = train_input_1, family = binomial(),
+#                         cvControl = list(V = 10),parallel = "multicore",saveAll = TRUE,
+#                         innerCvControl = list(list(V=10)),SL.library = c("SL.glm", "SL.ranger", "SL.ksvm","SL.knn"),
+#                         verbose = TRUE)
+# summary(cv_sl1)
+# plot(cv_sl1) + theme_bw()
+# # Review meta-weights (coefficients) from a CV.SuperLearner object
+# review_weights = function(cv_sl) {
+#   meta_weights = coef(cv_sl)
+#   means = colMeans(meta_weights)
+#   sds = apply(meta_weights, MARGIN = 2,  FUN = sd)
+#   mins = apply(meta_weights, MARGIN = 2, FUN = min)
+#   maxs = apply(meta_weights, MARGIN = 2, FUN = max)
+#   # Combine the stats into a single matrix.
+#   sl_stats = cbind("mean(weight)" = means, "sd" = sds, "min" = mins, "max" = maxs)
+#   # Sort by decreasing mean weight.
+#   sl_stats[order(sl_stats[, 1], decreasing = TRUE), ]
+# }
+# #mostra qual è il miglior modello per ogni fold
+# table(simplify2array(cv_sl1$whichDiscreteSL))
+# print(review_weights(cv_sl1), digits = 3)
 
 #monk 2
-monk_train_2=read.table("/Users/gabrielebenanti/Documents/MONK/monks-2.train",header = FALSE, sep = "", dec = ".")
+monk_train_2=read.table("./MONK/monks-2.train",header = FALSE, sep = "", dec = ".")
 set.seed(1)
 split_id <- partition(monk_train_2$V1, p = c(train = 0.7, valid = 0.3))
 train_output_2 = monk_train_2[split_id$train,1]
 train_input_2 = monk_train_2[split_id$train,c(-1,-8)]
 validation_input_2 = monk_train_2[split_id$valid,c(-1,-8)]
 validation_output_2 = monk_train_2[split_id$valid,1]
-monk_test_2 = read.table("/Users/gabrielebenanti/Documents/MONK/monks-2.test", header = FALSE, sep = "", dec = ".")
+monk_test_2 = read.table("./MONK/monks-2.test", header = FALSE, sep = "", dec = ".")
 test_output_2 = monk_test_2$V1
 test_input_2= subset(monk_test_2,select = c(-V1,-V8))
 set.seed(3)
@@ -100,14 +111,14 @@ auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.valu
 auc
 
 #monk3
-monk_train_3=read.table("/Users/gabrielebenanti/Documents/MONK/monks-3.train",header = FALSE, sep = "", dec = ".")
+monk_train_3=read.table("./MONK/monks-3.train",header = FALSE, sep = "", dec = ".")
 set.seed(1)
 split_id <- partition(monk_train_3$V1, p = c(train = 0.7, valid = 0.3))
 train_output_3 = monk_train_3[split_id$train,1]
 train_input_3 = monk_train_3[split_id$train,c(-1,-8)]
 validation_input_3 = monk_train_3[split_id$valid,c(-1,-8)]
 validation_output_3 = monk_train_3[split_id$valid,1]
-monk_test_3 = read.table("/Users/gabrielebenanti/Documents/MONK/monks-3.test", header = FALSE, sep = "", dec = ".")
+monk_test_3 = read.table("./MONK/monks-3.test", header = FALSE, sep = "", dec = ".")
 test_output_3 = monk_test_3$V1
 test_input_3 = subset(monk_test_3,select = c(-V1,-V8))
 set.seed(3)
@@ -127,7 +138,7 @@ auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.valu
 auc
 
 #CUP dataset
-ml_cup_tr =read.table("/Users/gabrielebenanti/Library/CloudStorage/OneDrive-UniversityofPisa/Università/magistrale/ML/ML-22-PRJ lecture  package-20221108/ML-CUP22-TR.csv",header = FALSE, sep ="," , dec = ".")
+ml_cup_tr =read.table("./ML-22-PRJ lecture  package-20221108/ML-CUP22-TR.csv",header = FALSE, sep ="," , dec = ".")
 colSums(is.na((ml_cup_tr)))
 set.seed(10)
 split_id <- partition(ml_cup_tr$V12, p = c(train = 0.7, valid = 0.3))
