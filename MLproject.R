@@ -17,11 +17,11 @@ monk_train_1=read.table("/Users/gabrielebenanti/Documents/MONK/monks-1.train", h
 colSums(is.na(monk_train_1))
 # creo input - output train
 set.seed(1)
-split_id <- partition(monk_train_1$V1, p = c(train = 0.7, test = 0.3))
+split_id <- partition(monk_train_1$V1, p = c(train = 0.7, valid = 0.3))
 train_output_1 = monk_train_1[split_id$train,1]
 train_input_1 = monk_train_1[split_id$train,c(-1,-8)]
-validation_input_1 = monk_train_1[split_id$test,c(-1,-8)]
-validation_output_1 = monk_train_1[split_id$test,1]
+validation_input_1 = monk_train_1[split_id$valid,c(-1,-8)]
+validation_output_1 = monk_train_1[split_id$valid,1]
 # creo input - output test
 monk_test_1 = read.table("/Users/gabrielebenanti/Documents/MONK/monks-1.test", header = FALSE, sep = "", dec = ".")
 colSums(is.na((monk_test_1)))
@@ -75,11 +75,11 @@ print(review_weights(cv_sl1), digits = 3)
 #monk 2
 monk_train_2=read.table("/Users/gabrielebenanti/Documents/MONK/monks-2.train",header = FALSE, sep = "", dec = ".")
 set.seed(1)
-split_id <- partition(monk_train_2$V1, p = c(train = 0.7, test = 0.3))
+split_id <- partition(monk_train_2$V1, p = c(train = 0.7, valid = 0.3))
 train_output_2 = monk_train_2[split_id$train,1]
 train_input_2 = monk_train_2[split_id$train,c(-1,-8)]
-validation_input_2 = monk_train_2[split_id$test,c(-1,-8)]
-validation_output_2 = monk_train_2[split_id$test,1]
+validation_input_2 = monk_train_2[split_id$valid,c(-1,-8)]
+validation_output_2 = monk_train_2[split_id$valid,1]
 monk_test_2 = read.table("/Users/gabrielebenanti/Documents/MONK/monks-2.test", header = FALSE, sep = "", dec = ".")
 test_output_2 = monk_test_2$V1
 test_input_2= subset(monk_test_2,select = c(-V1,-V8))
@@ -102,11 +102,11 @@ auc
 #monk3
 monk_train_3=read.table("/Users/gabrielebenanti/Documents/MONK/monks-3.train",header = FALSE, sep = "", dec = ".")
 set.seed(1)
-split_id <- partition(monk_train_3$V1, p = c(train = 0.7, test = 0.3))
+split_id <- partition(monk_train_3$V1, p = c(train = 0.7, valid = 0.3))
 train_output_3 = monk_train_3[split_id$train,1]
 train_input_3 = monk_train_3[split_id$train,c(-1,-8)]
-validation_input_3 = monk_train_3[split_id$test,c(-1,-8)]
-validation_output_3 = monk_train_3[split_id$test,1]
+validation_input_3 = monk_train_3[split_id$valid,c(-1,-8)]
+validation_output_3 = monk_train_3[split_id$valid,1]
 monk_test_3 = read.table("/Users/gabrielebenanti/Documents/MONK/monks-3.test", header = FALSE, sep = "", dec = ".")
 test_output_3 = monk_test_3$V1
 test_input_3 = subset(monk_test_3,select = c(-V1,-V8))
@@ -130,13 +130,13 @@ auc
 ml_cup_tr =read.table("/Users/gabrielebenanti/Library/CloudStorage/OneDrive-UniversityofPisa/Università/magistrale/ML/ML-22-PRJ lecture  package-20221108/ML-CUP22-TR.csv",header = FALSE, sep ="," , dec = ".")
 colSums(is.na((ml_cup_tr)))
 set.seed(10)
-split_id <- partition(ml_cup_tr$V12, p = c(train = 0.7, test = 0.3))
+split_id <- partition(ml_cup_tr$V12, p = c(train = 0.7, valid = 0.3))
 
 ml_cup_tr_output=ml_cup_tr[split_id$train,c(11,12)]
 ml_cup_tr_input=ml_cup_tr[split_id$train,2:10]
 
-ml_cup_ts_output=ml_cup_tr[split_id$test,c(11,12)]
-ml_cup_ts_input=ml_cup_tr[split_id$test,2:10]
+ml_cup_ts_output=ml_cup_tr[split_id$valid,c(11,12)]
+ml_cup_ts_input=ml_cup_tr[split_id$valid,2:10]
 
 cup1<- SuperLearner(Y = ml_cup_tr_output$V11, X = ml_cup_tr_input, family = gaussian(),
                     SL.library = c("SL.ksvm"))
