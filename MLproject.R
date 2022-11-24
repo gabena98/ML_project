@@ -23,7 +23,7 @@ train_input_1 = monk_train_1[split_id$train,c(-1,-8)]
 validation_input_1 = monk_train_1[split_id$valid,c(-1,-8)]
 validation_output_1 = monk_train_1[split_id$valid,1]
 # creo input - output test
-monk_test_1 = read.table("./MONK/monks-1.test", header = FALSE, sep = "", dec = ".")
+monk_test_1 = read.table("./Documents/MONK/monks-1.test", header = FALSE, sep = "", dec = ".")
 colSums(is.na((monk_test_1)))
 test_output_1 = monk_test_1$V1
 test_input_1 = subset(monk_test_1,select = c(-V1,-V8))
@@ -31,19 +31,18 @@ test_input_1 = subset(monk_test_1,select = c(-V1,-V8))
 #setto seme per riprodurre la CV ogni volta
 #provare a vedere se si può cambiare iperparametri, es KSVM (vedi slide 9 SVM-other-info)
 set.seed(3)
-tune_ranger = list(num.trees = 500,
-                   mtry = floor(sqrt(ncol(train_input_1))),
-                   min.node.size = 1)
+tune_ranger = list(num.trees = c(500,1000,2000),
+                   mtry = c(floor(sqrt(ncol(train_input_1))),ncol(train_input_1)))
 learner_ranger = create.Learner("SL.ranger", tune = tune_ranger, detailed_names = TRUE, name_prefix = "ranger")
 tune_svm_rbf = list(kernel = "rbfdot", sigma = c(0.06, 0.01, 0.1), C = c(0.8, 1, 1.2))
+learner_svm_rbf = create.Learner("SL.ksvm", tune = tune_svm_rbf, detailed_names = TRUE, name_prefix = "ksvm")
 #tune_svm_poly = list(kernel = "polydot", degree = c(2, 2.5, 3), offset = 1, C = c(0.8, 1, 1.2))
 #tune_svm_poly = list(kernel = "polydot")
 #tune_svm_tanh = list(kernel = "tanhdot")
-learner_svm_rbf = create.Learner("SL.ksvm", tune = tune_svm_rbf, detailed_names = TRUE, name_prefix = "ksvm")
 #learner_svm_poly = create.Learner("SL.ksvm", tune = tune_svm_poly, detailed_names = TRUE, name_prefix = "ksvm")
 #learner_svm_tanh = create.Learner("SL.ksvm", tune = tune_svm_tanh, detailed_names = TRUE, name_prefix = "ksvm")
 sl1 <- SuperLearner(Y = train_output_1, X = train_input_1, newX = validation_input_1, family = binomial(),
-                         SL.library = c("SL.glm", learner_ranger$names, learner_svm_rbf$names),
+                         SL.library = c("SL.glm",learner_ranger$names ,learner_svm_rbf$names),
                          verbose = TRUE,cvControl=list(10,TRUE) ,control = list(TRUE, TRUE))
 sl1
 
@@ -84,19 +83,19 @@ auc
 # print(review_weights(cv_sl1), digits = 3)
 
 #monk 2
-monk_train_2=read.table("./MONK/monks-2.train",header = FALSE, sep = "", dec = ".")
+monk_train_2=read.table("./Documents/MONK/monks-2.train",header = FALSE, sep = "", dec = ".")
 set.seed(1)
 split_id <- partition(monk_train_2$V1, p = c(train = 0.7, valid = 0.3))
 train_output_2 = monk_train_2[split_id$train,1]
 train_input_2 = monk_train_2[split_id$train,c(-1,-8)]
 validation_input_2 = monk_train_2[split_id$valid,c(-1,-8)]
 validation_output_2 = monk_train_2[split_id$valid,1]
-monk_test_2 = read.table("./MONK/monks-2.test", header = FALSE, sep = "", dec = ".")
+monk_test_2 = read.table("./Documents/MONK/monks-2.test", header = FALSE, sep = "", dec = ".")
 test_output_2 = monk_test_2$V1
 test_input_2= subset(monk_test_2,select = c(-V1,-V8))
 set.seed(3)
 sl2 <- SuperLearner(Y = train_output_2, X = train_input_2, newX = validation_input_2,family = binomial(),
-                    SL.library = c("SL.glm","SL.ranger","SL.ksvm"),
+                    SL.library = c("SL.glm",learner_ranger$names,learner_svm_rbf$names),
                     verbose = TRUE, cvControl=list(10,TRUE),control = list(TRUE, TRUE))
 sl2
 
@@ -111,19 +110,19 @@ auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.valu
 auc
 
 #monk3
-monk_train_3=read.table("./MONK/monks-3.train",header = FALSE, sep = "", dec = ".")
+monk_train_3=read.table("./Documents/MONK/monks-3.train",header = FALSE, sep = "", dec = ".")
 set.seed(1)
 split_id <- partition(monk_train_3$V1, p = c(train = 0.7, valid = 0.3))
 train_output_3 = monk_train_3[split_id$train,1]
 train_input_3 = monk_train_3[split_id$train,c(-1,-8)]
 validation_input_3 = monk_train_3[split_id$valid,c(-1,-8)]
 validation_output_3 = monk_train_3[split_id$valid,1]
-monk_test_3 = read.table("./MONK/monks-3.test", header = FALSE, sep = "", dec = ".")
+monk_test_3 = read.table("./Documents/MONK/monks-3.test", header = FALSE, sep = "", dec = ".")
 test_output_3 = monk_test_3$V1
 test_input_3 = subset(monk_test_3,select = c(-V1,-V8))
 set.seed(3)
 sl3 <- SuperLearner(Y = train_output_3, X = train_input_3, newX = validation_input_3,family = binomial(),
-                    SL.library = c("SL.glm","SL.ranger","SL.ksvm"),
+                    SL.library = c("SL.glm",learner_ranger$names,learner_svm_rbf$names),
                     verbose = TRUE, cvControl=list(10,TRUE),control = list(TRUE, TRUE))
 sl3
 
