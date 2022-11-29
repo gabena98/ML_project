@@ -12,18 +12,18 @@ library(MLmetrics)
 
 #monk 1
 #cambiare il path per eseguire su altri computer
-monk_train_1_hot = read.csv("/Users/gabrielebenanti/Documents/ML_project/monk_1_train_hot.csv",header = FALSE)
+monk_train_1_hot = read.csv("./Documents/ML_project/monk_1_train_hot.csv",header = FALSE)
 #controllo se esistono valori NA
-colSums(is.na(monk_train_1_hot_hot))
+colSums(is.na(monk_train_1_hot))
 # creo input - output train
 set.seed(1)
-split_id <- partition(monk_train_1_hot_hot$V1, p = c(train = 0.7, valid = 0.3))
+split_id <- partition(monk_train_1_hot$V1, p = c(train = 0.7, valid = 0.3))
 train_output_1 = monk_train_1_hot[split_id$train,1]
 train_input_1 = monk_train_1_hot[split_id$train,-1]
 validation_input_1 = monk_train_1_hot[split_id$valid,-1]
 validation_output_1 = monk_train_1_hot[split_id$valid,1]
 # creo input - output test
-monk_test_1_hot = read.csv("/Users/gabrielebenanti/Documents/ML_project/monk_1_test_hot.csv", header = FALSE)
+monk_test_1_hot = read.csv("./Documents/ML_project/monk_1_test_hot.csv", header = FALSE)
 colSums(is.na((monk_test_1_hot)))
 test_output_1 = monk_test_1_hot$V1
 test_input_1 = subset(monk_test_1_hot,select = -V1)
@@ -83,17 +83,18 @@ auc
 # print(review_weights(cv_sl1), digits = 3)
 
 #monk 2
-monk_train_2_hot=read.csv("/Users/gabrielebenanti/Documents/ML_project/monk_2_train_hot.csv",header = FALSE)
+monk_train_2_hot=read.csv("./Documents/ML_project/monk_2_train_hot.csv",header = FALSE)
+colSums(is.na(monk_train_2_hot))
 set.seed(1)
 split_id <- partition(monk_train_2_hot$V1, p = c(train = 0.7, valid = 0.3))
 train_output_2 = monk_train_2_hot[split_id$train,1]
 train_input_2 = monk_train_2_hot[split_id$train,-1]
 validation_input_2 = monk_train_2_hot[split_id$valid,-1]
 validation_output_2 = monk_train_2_hot[split_id$valid,1]
-monk_test_2_hot = read.csv("/Users/gabrielebenanti/Documents/ML_project/monk_2_test_hot.csv",header = FALSE)
+monk_test_2_hot = read.csv("./Documents/ML_project/monk_2_test_hot.csv",header = FALSE)
 test_output_2 = monk_test_2_hot$V1
-test_input_2= subset(monk_test_2_hot,select = -V1)
-set.seed(3)
+test_input_2 = subset(monk_test_2_hot,select = -V1)
+set.seed(1)
 sl2 <- SuperLearner(Y = train_output_2, X = train_input_2, newX = validation_input_2,family = binomial(),
                     SL.library = c("SL.glm",learner_ranger$names,learner_svm_rbf$names),
                     verbose = TRUE, cvControl=list(10,TRUE),control = list(TRUE, TRUE))
@@ -110,14 +111,14 @@ auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.valu
 auc
 
 #monk3
-monk_train_3_hot=read.csv("/Users/gabrielebenanti/Documents/ML_project/monk_3_train_hot.csv",header = FALSE)
+monk_train_3_hot=read.csv("./Documents/ML_project/monk_3_train_hot.csv",header = FALSE)
 set.seed(1)
 split_id <- partition(monk_train_3_hot$V1, p = c(train = 0.7, valid = 0.3))
 train_output_3 = monk_train_3_hot[split_id$train,1]
 train_input_3 = monk_train_3_hot[split_id$train,-1]
 validation_input_3 = monk_train_3_hot[split_id$valid,-1]
 validation_output_3 = monk_train_3_hot[split_id$valid,1]
-monk_test_3_hot = read.csv("/Users/gabrielebenanti/Documents/ML_project/monk_3_test_hot.csv",header = FALSE)
+monk_test_3_hot = read.csv("./Documents/ML_project/monk_3_test_hot.csv",header = FALSE)
 test_output_3 = monk_test_3_hot$V1
 test_input_3 = subset(monk_test_3_hot,select = -V1)
 set.seed(3)
@@ -135,3 +136,4 @@ pred3 = predict(sl3, test_input_3, onlySL = TRUE)
 pred_rocr = ROCR::prediction(pred3$pred, test_output_3)
 auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
 auc
+

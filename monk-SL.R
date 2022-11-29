@@ -12,7 +12,7 @@ library(MLmetrics)
 
 #monk 1
 #cambiare il path per eseguire su altri computer
-monk_train_1=read.table("./MONK/monks-1.train", header = FALSE, sep = "", dec = ".")
+monk_train_1=read.table("./Documents/MONK/monks-1.train", header = FALSE, sep = "", dec = ".")
 #controllo se esistono valori NA
 colSums(is.na(monk_train_1))
 # creo input - output train
