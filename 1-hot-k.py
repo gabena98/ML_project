@@ -3,7 +3,7 @@ from sklearn.preprocessing._encoders import OneHotEncoder
 from sklearn import *
 
 def loadMonk(file_, filetype):
-    filename="/Users/gabrielebenanti/Documents/MONK/monks-{}.{}".format(file_, filetype)
+    filename="./MONK/monks-{}.{}".format(file_, filetype)
     #leggo ogni riga del file aperto
     with open(filename) as f:
         data_=[]
@@ -19,14 +19,14 @@ def loadMonk(file_, filetype):
     return X_train
 
 trainData=loadMonk(1, 'train')
-np.savetxt('monk_1_train_hot.csv', trainData, delimiter=',')
+np.savetxt('./MONK/monk_1_train_hot.csv', trainData, delimiter=',')
 trainData=loadMonk(1, 'test')
-np.savetxt('monk_1_test_hot.csv', trainData, delimiter=',')
+np.savetxt('./MONK/monk_1_test_hot.csv', trainData, delimiter=',')
 trainData=loadMonk(2, 'train')
-np.savetxt('monk_2_train_hot.csv', trainData, delimiter=',')
+np.savetxt('./MONK/monk_2_train_hot.csv', trainData, delimiter=',')
 trainData=loadMonk(2, 'test')
-np.savetxt('monk_2_test_hot.csv', trainData, delimiter=',')
+np.savetxt('./MONK/monk_2_test_hot.csv', trainData, delimiter=',')
 trainData=loadMonk(3, 'train')
-np.savetxt('monk_3_train_hot.csv', trainData, delimiter=',')
+np.savetxt('./MONK/monk_3_train_hot.csv', trainData, delimiter=',')
 trainData=loadMonk(3, 'test')
-np.savetxt('monk_3_test_hot.csv', trainData, delimiter=',')
+np.savetxt('./MONK/monk_3_test_hot.csv', trainData, delimiter=',')
