@@ -2,24 +2,32 @@ library(MLmetrics)
 library(SuperLearner)
 library(performanceEstimation)
 library(splitTools)
+library(sjmisc)
 
 #CUP
 cup_train = read.csv("./CUP/ML-CUP22-TR_noHeader.csv", header = FALSE)
 cup_train = cup_train[c(-1)]
+# dataset normalizzato (varianza = 1)
+#cup_train_std = std(cup_train, append = FALSE) #questa funzione imposta media = 0, varianza = 1 (standardizzazione)
+# oppure
+data_size = c() # vettore che contiene le sd di ogni colonna
+for (i in 1:dim(cup_train)[2]) {
+  data_size=append(data_size,sd(cup_train[,i]))
+}
+cup_train_std = sweep(cup_train,2,data_size,`/`) #dataset normalizzato
 #controllo se esistono valori NA
-colSums(is.na(cup_train))
+colSums(is.na(cup_train_std))
 # creo input - output train
 set.seed(1)
 # potremmo direttamente dividere in train, test. La valiation la crea dentro la CV
-split_id_cup <- partition(cup_train$V2, p = c(train = 0.7, valid = 0.3))
-train_input_cup = cup_train[split_id_cup$train, c(-10, -11)]
-train_output_1_cup = cup_train[split_id_cup$train, 10]
-train_output_2_cup = cup_train[split_id_cup$train, 11]
-validation_input_cup = cup_train[split_id_cup$valid, c(-10, -11)]
-validation_output_1_cup = cup_train[split_id_cup$valid,10]
-validation_output_2_cup = cup_train[split_id_cup$valid,11]
+split_id_cup <- partition(cup_train_std$V2, p = c(train = 0.7, valid = 0.3))
+train_input_cup = cup_train_std[split_id_cup$train, c(-10, -11)]
+train_output_1_cup = cup_train_std[split_id_cup$train, 10]
+train_output_2_cup = cup_train_std[split_id_cup$train, 11]
+validation_input_cup = cup_train_std[split_id_cup$valid, c(-10, -11)]
+validation_output_1_cup = cup_train_std[split_id_cup$valid,10]
+validation_output_2_cup = cup_train_std[split_id_cup$valid,11]
 #Superlearner
-set.seed(3)
 # modelli per random forest
 tune_ranger_cup = list(num.trees = c(500,1000,2000), mtry = c(floor(sqrt(ncol(train_input_cup))),
                                                               ncol(train_input_cup)))
@@ -50,8 +58,8 @@ sl_cup_2 <- SuperLearner(Y = train_output_2_cup, X = train_input_cup,
                          verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_2
 ### previsioni VALIDATION SET, non necessario, lo fa già Superlearner quando gli passiamo newX
-pred_cup_1 = predict.SuperLearner(object = sl_cup_1, newdata = validation_input_cup, onlySL = TRUE)
-pred_cup_2 = predict.SuperLearner(object = sl_cup_2, newdata = validation_input_cup, onlySL = TRUE)
+#pred_cup_1 = predict.SuperLearner(object = sl_cup_1, newdata = validation_input_cup, onlySL = TRUE)
+#pred_cup_2 = predict.SuperLearner(object = sl_cup_2, newdata = validation_input_cup, onlySL = TRUE)
 ###
 mae1 = MAE(sl_cup_1$SL.predict, validation_output_1_cup)
 mae2 = MAE(sl_cup_2$SL.predict, validation_output_2_cup)
@@ -66,3 +74,17 @@ accuracy2 = 100 - (mae2 / abs(mean(validation_output_2_cup)))
 
 accuracy1
 accuracy2
+
+# mean euclidean error
+mean_euclidean_error = function(y1_out, y1_target, y2_out, y2_target){
+  value = 0
+  for (i in 1:length(y1_out)) {
+    y1 = (y1_out[i] - y1_target[i])^2
+    y2 = (y2_out[i] - y2_target[i])^2
+    root = sqrt(y1+y2)
+    value = value+root
+  }
+  return(value/length(y1_out))
+}
+# MEE sul test set
+mean_euclidean_error(sl_cup_1$SL.predict,validation_output_1_cup,sl_cup_2$SL.predict,validation_output_2_cup)
