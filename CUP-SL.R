@@ -20,13 +20,13 @@ colSums(is.na(cup_train_std))
 # creo input - output train
 set.seed(1)
 # potremmo direttamente dividere in train, test. La valiation la crea dentro la CV
-split_id_cup <- partition(cup_train_std$V2, p = c(train = 0.7, valid = 0.3))
-train_input_cup = cup_train_std[split_id_cup$train, c(-10, -11)]
-train_output_1_cup = cup_train_std[split_id_cup$train, 10]
-train_output_2_cup = cup_train_std[split_id_cup$train, 11]
-validation_input_cup = cup_train_std[split_id_cup$valid, c(-10, -11)]
-validation_output_1_cup = cup_train_std[split_id_cup$valid,10]
-validation_output_2_cup = cup_train_std[split_id_cup$valid,11]
+split_id_cup <- partition(cup_train$V2, p = c(train = 0.7, test = 0.3))
+train_input_cup = cup_train[split_id_cup$train, c(-10, -11)]
+train_output_1_cup = cup_train[split_id_cup$train, 10]
+train_output_2_cup = cup_train[split_id_cup$train, 11]
+validation_input_cup = cup_train[split_id_cup$test, c(-10, -11)]
+validation_output_1_cup = cup_train[split_id_cup$test,10]
+validation_output_2_cup = cup_train[split_id_cup$test,11]
 #Superlearner
 # modelli per random forest
 tune_ranger_cup = list(num.trees = c(500,1000,2000), mtry = c(floor(sqrt(ncol(train_input_cup))),
@@ -51,7 +51,7 @@ sl_cup_1 <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,
 
 sl_cup_1
 #input2
-set.seed(11)
+set.seed(12)
 sl_cup_2 <- SuperLearner(Y = train_output_2_cup, X = train_input_cup,
                          newX = validation_input_cup, family = gaussian(),
                          SL.library = c(learner_ranger_cup$names ,learner_svm_rbf_cup$names, learner_glmnet_cup$names),
@@ -88,3 +88,16 @@ mean_euclidean_error = function(y1_out, y1_target, y2_out, y2_target){
 }
 # MEE sul test set
 mean_euclidean_error(sl_cup_1$SL.predict,validation_output_1_cup,sl_cup_2$SL.predict,validation_output_2_cup)
+
+# SOLO nel caso di dataset normalizzato
+# scalo a varianza originale le variabili predette
+pred1 = sweep(sl_cup_1$SL.predict,2,data_size[10],`*`)
+pred2 = sweep(sl_cup_2$SL.predict,2,data_size[11],`*`)
+validation_output_1_cup_real = cup_train[split_id_cup$test,10]
+validation_output_2_cup_real = cup_train[split_id_cup$test,11]
+mean_euclidean_error(pred1,validation_output_1_cup_real,pred2,validation_output_2_cup_real)
+mse1.1 = MSE(pred1, validation_output_1_cup_real)
+mse1.1
+mse2.1 = MSE(pred2, validation_output_2_cup_real)
+mse2.1
+
