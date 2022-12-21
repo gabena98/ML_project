@@ -15,11 +15,8 @@ monk_train_1=read.table("./MONK/monks-1.train", header = FALSE, sep = "", dec = 
 colSums(is.na(monk_train_1))
 # creo input - output train
 set.seed(1)
-split_id <- partition(monk_train_1$V1, p = c(train = 0.7, valid = 0.3))
-train_output_1 = monk_train_1[split_id$train,1]
-train_input_1 = monk_train_1[split_id$train,c(-1,-8)]
-validation_input_1 = monk_train_1[split_id$valid,c(-1,-8)]
-validation_output_1 = monk_train_1[split_id$valid,1]
+train_output_1 = monk_train_1[,1]
+train_input_1 = monk_train_1[,c(-1,-8)]
 # creo input - output test
 monk_test_1 = read.table("./MONK/monks-1.test", header = FALSE, sep = "", dec = ".")
 colSums(is.na((monk_test_1)))
@@ -42,11 +39,6 @@ sl1
 pred_rocr = ROCR::prediction(sl1$SL.predict, train_output_1)
 auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
 auc
-# previsioni VALIDATION SET
-pred1 = predict(sl1, validation_input_1, onlySL = TRUE)
-pred_rocr = ROCR::prediction(pred1$pred, validation_output_1)
-auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-auc
 #previsioni TEST SET
 pred1 = predict(sl1, test_input_1, onlySL = TRUE)
 pred_rocr = ROCR::prediction(pred1$pred, test_output_1)
@@ -56,11 +48,8 @@ auc
 #monk 2
 monk_train_2=read.table("./MONK/monks-2.train",header = FALSE, sep = "", dec = ".")
 set.seed(1)
-split_id <- partition(monk_train_2$V1, p = c(train = 0.7, valid = 0.3))
-train_output_2 = monk_train_2[split_id$train,1]
-train_input_2 = monk_train_2[split_id$train,c(-1,-8)]
-validation_input_2 = monk_train_2[split_id$valid,c(-1,-8)]
-validation_output_2 = monk_train_2[split_id$valid,1]
+train_output_2 = monk_train_2[,1]
+train_input_2 = monk_train_2[,c(-1,-8)]
 monk_test_2 = read.table("./MONK/monks-2.test", header = FALSE, sep = "", dec = ".")
 test_output_2 = monk_test_2$V1
 test_input_2= subset(monk_test_2,select = c(-V1,-V8))
@@ -74,11 +63,6 @@ sl2
 pred_rocr = ROCR::prediction(sl1$SL.predict, train_output_1)
 auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
 auc
-# previsioni VALIDATION SET
-pred2 = predict(sl2, validation_input_2, onlySL = TRUE)
-pred_rocr = ROCR::prediction(pred2$pred, validation_output_2)
-auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-auc
 # previsioni TEST SET
 pred2 = predict(sl2, test_input_2, onlySL = TRUE)
 pred_rocr = ROCR::prediction(pred2$pred, test_output_2)
@@ -88,11 +72,8 @@ auc
 #monk3
 monk_train_3=read.table("./MONK/monks-3.train",header = FALSE, sep = "", dec = ".")
 set.seed(1)
-split_id <- partition(monk_train_3$V1, p = c(train = 0.7, valid = 0.3))
 train_output_3 = monk_train_3[split_id$train,1]
 train_input_3 = monk_train_3[split_id$train,c(-1,-8)]
-validation_input_3 = monk_train_3[split_id$valid,c(-1,-8)]
-validation_output_3 = monk_train_3[split_id$valid,1]
 monk_test_3 = read.table("./MONK/monks-3.test", header = FALSE, sep = "", dec = ".")
 test_output_3 = monk_test_3$V1
 test_input_3 = subset(monk_test_3,select = c(-V1,-V8))
@@ -104,11 +85,6 @@ sl3
 
 # AUC TRAINING SET
 pred_rocr = ROCR::prediction(sl1$SL.predict, train_output_1)
-auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-auc
-#previsioni VALIDATION SET
-pred3 = predict(sl3, validation_input_3, onlySL = TRUE)
-pred_rocr = ROCR::prediction(pred3$pred, validation_output_3)
 auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
 auc
 #previsioni TEST SET
