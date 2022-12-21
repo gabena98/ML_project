@@ -78,13 +78,12 @@ training_mean_euclidean_error(sl_cup_1,sl_cup_2)
 validation_mean_euclidean_error(sl_cup_1,sl_cup_2)
 # MEE sul test set
 mean_euclidean_error(pred_cup_1$pred,test_output_1_cup,pred_cup_2$pred,test_output_2_cup)
-# possiamo calcolarci il MSE del training set una volta scelti i pesi 
+{# possiamo calcolarci il MSE del training set una volta scelti i pesi 
 # e rifittati i modelli su tutto il training set
-mse1_1 = MSE(sl_cup_1$SL.predict, train_output_1_cup)
-mse1_1
-mse2_1 = MSE(sl_cup_2$SL.predict, train_output_2_cup)
-mse2_1
-{
+# mse1_1 = MSE(sl_cup_1$SL.predict, train_output_1_cup)
+# mse1_1
+# mse2_1 = MSE(sl_cup_2$SL.predict, train_output_2_cup)
+# mse2_1
 # SOLO nel caso di dataset normalizzato
 # scalo a varianza originale le variabili predette
 # pred1 = sweep(sl_cup_1$SL.predict,2,data_size[10],`*`)
