@@ -73,8 +73,8 @@ auc
 #monk3
 monk_train_3_hot=read.csv("./MONK/monk_3_train_hot.csv",header = FALSE)
 set.seed(1)
-train_input_3 = monk_train_3_hot[split_id$train,-1]
-train_output_3 = monk_train_3_hot[split_id$train,1]
+train_input_3 = monk_train_3_hot[,-1]
+train_output_3 = monk_train_3_hot[,1]
 monk_test_3_hot = read.csv("./MONK/monk_3_test_hot.csv",header = FALSE)
 test_output_3 = monk_test_3_hot[,1]
 test_input_3 = monk_test_3_hot[,-1]
