@@ -59,8 +59,6 @@ training_mean_euclidean_error_v2 = function(sl_cup_1,sl_cup_2){
 ### in questo caso prendo le righe del validation set per ogni corrispettivo fold
 validation_mean_euclidean_error = function(sl_cup_1,sl_cup_2){
   validation_mee=0
-  #1
-  # calcolo predizioni primo SL
   coef_1 = unname(sl_cup_1$coef)
   coef_2 = unname(sl_cup_2$coef)
   
