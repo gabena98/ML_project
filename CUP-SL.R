@@ -35,10 +35,30 @@ learner_svm_rbf_cup = create.Learner("SL.ksvm", tune = tune_svm_rbf_cup, detaile
 tune_glmenet_cup = list(alpha = c(0,1),nlambda = c(100, 500, 50), useMin = c(TRUE,FALSE))
 learner_glmnet_cup = create.Learner("SL.glmnet", tune = tune_glmenet_cup, detailed_names = TRUE,
                                     name_prefix = "glmnet" )
+
+
+#IN ALTERNATIVA...
+
+# modelli per random forest
+tune_ranger_cup = list(num.trees = seq(250, 5000, by=50), mtry = 1:ncol(train_input_cup))
+learner_ranger_cup = create.Learner("SL.ranger", tune = tune_ranger_cup, detailed_names = TRUE,
+                                    name_prefix = "ranger")
+# modelli per ksvm
+tune_svm_rbf_cup = list(kernel = "rbfdot", sigma = seq(0.001, 10, by=0.01), C = seq(0.001, 10, by=0.01))
+learner_svm_rbf_cup = create.Learner("SL.ksvm", tune = tune_svm_rbf_cup, detailed_names = TRUE,
+                                     name_prefix = "ksvm")
+# modelli per ridge e lasso
+tune_glmenet_cup = list(alpha = seq(0, 1, by=0.1), nlambda = seq(100, 1000, by=50), useMin = c(TRUE,FALSE))
+learner_glmnet_cup = create.Learner("SL.glmnet", tune = tune_glmenet_cup, detailed_names = TRUE,
+                                    name_prefix = "glmnet" )
+
+
+
 #input1
 set.seed(12)
 sl_cup_1 <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,family = gaussian(),
-                    SL.library = c(learner_ranger_cup$names ,learner_svm_rbf_cup$names, learner_glmnet_cup$names),
+                    SL.library = c(#learner_ranger_cup$names ,
+                                   learner_svm_rbf_cup$names, learner_glmnet_cup$names),
                     verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 
 sl_cup_1
