@@ -35,14 +35,14 @@ sl_cup_ranger_1 <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,fami
 
 sl_cup_ranger_1
 val = data.frame(sl_cup_ranger_1$coef,sl_cup_ranger_1$cvRisk)
-write.csv(val,file = "sl_cup_ranger1.csv")
+write.csv(val,file = "sl_cup_ranger1_second.csv")
 set.seed(12)
 sl_cup_ranger_2 <- SuperLearner(Y = train_output_2_cup, X = train_input_cup, family = gaussian(),
                                 SL.library = learner_ranger_cup_assestment$names,
                                 verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_ranger_2
 val = data.frame(sl_cup_ranger_2$coef,sl_cup_ranger_2$cvRisk)
-write.csv(val,file = "sl_cup_ranger2.csv")
+write.csv(val,file = "sl_cup_ranger2_second.csv")
 # modelli per ksvm
 tune_svm_rbf_cup_assestment = list(kernel = "rbfdot",
                                    sigma = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 2.5, 3, 3.5),
@@ -56,14 +56,14 @@ sl_cup_svm_1 <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,family 
                              verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_svm_1
 val = data.frame(sl_cup_svm_1$coef,sl_cup_svm_1$cvRisk)
-write.csv(val,file = "sl_cup_svm1.csv")
+write.csv(val,file = "sl_cup_svm1_second.csv")
 set.seed(12)
 sl_cup_svm_2 <- SuperLearner(Y = train_output_2_cup, X = train_input_cup, family = gaussian(),
                              SL.library = learner_svm_rbf_cup_assestment$names,
                              verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_svm_2
 val = data.frame(sl_cup_svm_2$coef,sl_cup_svm_2$cvRisk)
-write.csv(val,file = "sl_cup_svm2.csv")
+write.csv(val,file = "sl_cup_svm2_second.csv")
 # modelli per ridge e lasso
 tune_glmenet_cup_assestment = list(alpha = c(0, 0.1, 0.2, 0.6, 1),
                                    nlambda = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100),
@@ -76,14 +76,14 @@ sl_cup_glmnet_1 <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,fami
                                 verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_glmnet_1
 val = data.frame(sl_cup_glmnet_1$coef,sl_cup_glmnet_1$cvRisk)
-write.csv(val,file = "sl_cup_glmnet1.csv")
+write.csv(val,file = "sl_cup_glmnet1_second.csv")
 set.seed(12)
 sl_cup_glmnet_2 <- SuperLearner(Y = train_output_2_cup, X = train_input_cup, family = gaussian(),
                                 SL.library = learner_glmnet_cup_assestment$names,
                                 verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_glmnet_2
 val = data.frame(sl_cup_glmnet_2$coef,sl_cup_glmnet_2$cvRisk)
-write.csv(val,file = "sl_cup_glmnet2.csv")
+write.csv(val,file = "sl_cup_glmnet2_second.csv")
 
 ### previsioni TEST SET, non necessario se passiamo a Superlearner newX
 pred_cup_ranger_1 = predict.SuperLearner(object = sl_cup_ranger_1, newdata = test_input_cup, onlySL = TRUE)
