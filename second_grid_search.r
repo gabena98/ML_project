@@ -49,17 +49,27 @@ tune_svm_rbf_cup_assestment = list(kernel = "rbfdot",
                                    C = c(0.1, 0.3, 0.7, 1, 2, 3, 5, 6, 8, 10))
 learner_svm_rbf_cup_assestment = create.Learner("SL.ksvm", tune = tune_svm_rbf_cup_assestment, detailed_names = TRUE,
                                                 name_prefix = "ksvm")
+tune_util_1 = list(kernel = "rbfdot",
+                   sigma = 0.001,
+                   C = 0.1)
+learner_util_1 = create.Learner("SL.ksvm", tune = tune_util_1, detailed_names = TRUE,
+                                name_prefix = "ksvm")
+tune_util_2 = list(kernel = "rbfdot",
+                   sigma = 0.01,
+                   C = 10)
+learner_util_2 = create.Learner("SL.ksvm", tune = tune_util_2, detailed_names = TRUE,
+                                name_prefix = "ksvm")
 
 set.seed(12)
 sl_cup_svm_1 <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,family = gaussian(),
-                             SL.library = learner_svm_rbf_cup_assestment$names,
+                             SL.library = c(learner_svm_rbf_cup_assestment$names, learner_util_1$names, learner_util_2$names),
                              verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_svm_1
 val = data.frame(sl_cup_svm_1$coef,sl_cup_svm_1$cvRisk)
 write.csv(val,file = "sl_cup_svm1_second.csv")
 set.seed(12)
 sl_cup_svm_2 <- SuperLearner(Y = train_output_2_cup, X = train_input_cup, family = gaussian(),
-                             SL.library = learner_svm_rbf_cup_assestment$names,
+                             SL.library = c(learner_svm_rbf_cup_assestment$names, learner_util_1$names, learner_util_2$names),
                              verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_svm_2
 val = data.frame(sl_cup_svm_2$coef,sl_cup_svm_2$cvRisk)
