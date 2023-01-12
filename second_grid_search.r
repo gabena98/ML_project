@@ -41,7 +41,7 @@ sl_cup_ranger_2 <- SuperLearner(Y = train_output_2_cup, X = train_input_cup, fam
                                 SL.library = learner_ranger_cup_assestment$names,
                                 verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_ranger_2
-val = data.frame(sl_cup_ranger_2$coef,sl_cup_ranger_2$cvRisk)
+val = data.frame(sl_cup_ranger_2$coef,sl_cup_ranger_2$cvRisk,sl_cup_ranger_2$times$train[3])
 write.csv(val,file = "grid_search_results/sl_cup_ranger2_second.csv")
 # modelli per ksvm
 tune_svm_rbf_cup_assestment = list(kernel = "rbfdot",
