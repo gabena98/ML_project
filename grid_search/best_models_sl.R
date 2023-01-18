@@ -44,7 +44,7 @@ learner_glmnet_cup_0.3 = create.Learner("SL.glmnet", tune = tune_glmenet_cup_0.3
                                         name_prefix = "glmnet" )
 
 #input1
-set.seed(12)
+set.seed(121)
 sl_cup_1_best <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,family = gaussian(),
                                    SL.library = c(learner_ranger_cup2mtry$names, learner_ranger_cup_3mtry$names,
                                                   learner_svm_rbf_cup$names,
@@ -53,7 +53,7 @@ sl_cup_1_best <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,family
 
 sl_cup_1_best
 #input2
-set.seed(12)
+set.seed(121)
 sl_cup_2_best <- SuperLearner(Y = train_output_2_cup, X = train_input_cup, family = gaussian(),
                                    SL.library = c(learner_ranger_cup2mtry$names, learner_ranger_cup_3mtry$names,
                                                   learner_svm_rbf_cup$names,

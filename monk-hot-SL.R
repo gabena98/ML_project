@@ -36,14 +36,22 @@ sl1 <- SuperLearner(Y = train_output_1, X = train_input_1, family = binomial(),
 sl1
 
 # AUC TRAINING SET
+pred <- ifelse(sl1$SL.predict< 0.5, 0, 1)
+confusionMatrix(as.factor(pred), as.factor(train_output_1), mode = "everything", positive = "1")
+#MSE TRAINING SET
 pred_rocr = ROCR::prediction(sl1$SL.predict, train_output_1)
-auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-auc
+rmse = ROCR::performance(pred_rocr, measure = "rmse", x.measure = "cutoff")@y.values[[1]]
+mse=rmse^2
+mse
 # AUC TEST SET
 pred1 = predict(sl1, test_input_1, onlySL = TRUE)
+pred <- ifelse(pred1$pred< 0.5, 0, 1)
+confusionMatrix(as.factor(pred), as.factor(test_output_1), mode = "everything", positive = "1")
+#MSE TEST SET
 pred_rocr = ROCR::prediction(pred1$pred, test_output_1)
-auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-auc
+rmse = ROCR::performance(pred_rocr, measure = "rmse", x.measure = "cutoff")@y.values[[1]]
+mse=rmse^2
+mse
 
 #monk 2
 monk_train_2_hot=read.csv("./MONK/monk_2_train_hot.csv",header = FALSE)
@@ -61,14 +69,22 @@ sl2 <- SuperLearner(Y = train_output_2, X = train_input_2,family = binomial(),
 sl2
 
 # AUC TRAINING SET
+pred <- ifelse(sl2$SL.predict< 0.5, 0, 1)
+confusionMatrix(as.factor(pred), as.factor(train_output_2), mode = "everything", positive = "1")
+#MSE TRAINING SET
 pred_rocr = ROCR::prediction(sl2$SL.predict, train_output_2)
-auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-auc
+rmse = ROCR::performance(pred_rocr, measure = "rmse", x.measure = "cutoff")@y.values[[1]]
+mse=rmse^2
+mse
 # AUC TEST SET
 pred2 = predict(sl2, test_input_2, onlySL = TRUE)
+pred <- ifelse(pred2$pred< 0.5, 0, 1)
+confusionMatrix(as.factor(pred), as.factor(test_output_2), mode = "everything", positive = "1")
+#MSE TEST SET
 pred_rocr = ROCR::prediction(pred2$pred, test_output_2)
-auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-auc
+rmse = ROCR::performance(pred_rocr, measure = "rmse", x.measure = "cutoff")@y.values[[1]]
+mse=rmse^2
+mse
 
 #monk3
 monk_train_3_hot=read.csv("./MONK/monk_3_train_hot.csv",header = FALSE)
@@ -85,12 +101,19 @@ sl3 <- SuperLearner(Y = train_output_3, X = train_input_3,family = binomial(),
 sl3
 
 #AUC TRAINING SET
+pred <- ifelse(sl3$SL.predict< 0.5, 0, 1)
+confusionMatrix(as.factor(pred), as.factor(train_output_3), mode = "everything", positive = "1")
+#MSE TRAINING SET
 pred_rocr = ROCR::prediction(sl3$SL.predict, train_output_3)
-auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-auc
+rmse = ROCR::performance(pred_rocr, measure = "rmse", x.measure = "cutoff")@y.values[[1]]
+mse=rmse^2
+mse
 #AUC TEST SET
 pred3 = predict(sl3, test_input_3, onlySL = TRUE)
+pred <- ifelse(pred3$pred< 0.5, 0, 1)
+confusionMatrix(as.factor(pred), as.factor(test_output_3), mode = "everything", positive = "1")
+#MSE TRAINING SET
 pred_rocr = ROCR::prediction(pred3$pred, test_output_3)
-auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
-auc
-
+rmse = ROCR::performance(pred_rocr, measure = "rmse", x.measure = "cutoff")@y.values[[1]]
+mse=rmse^2
+mse
