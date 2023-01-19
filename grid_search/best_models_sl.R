@@ -22,18 +22,15 @@ test_output_2_cup = cup_train[split_id_cup$test,11]
 #Superlearner
 
 # modelli per random forest
-tune_ranger_cup_2mtry = list(num.trees = c(500, 750, 1000, 1750, 2000, 2500, 3000), mtry = 3)
+tune_ranger_cup_2mtry = list(num.trees = c(250,500, 750, 1000, 1750, 2000, 2500, 3000), mtry = 3)
 learner_ranger_cup2mtry = create.Learner("SL.ranger", tune = tune_ranger_cup_2mtry, detailed_names = TRUE,
                                     name_prefix = "ranger")
-tune_ranger_cup_3mtry = list(num.trees = 250, mtry = 3)
-learner_ranger_cup_3mtry = create.Learner("SL.ranger", tune = tune_ranger_cup_3mtry, detailed_names = TRUE,
-                                          name_prefix = "ranger")
 # modelli per ksvm
 tune_svm_rbf_cup = list(kernel = "rbfdot", sigma = c(2.5, 0.001, 0.2, 3.5), C = c(1, 2, 3, 0.7))
 learner_svm_rbf_cup = create.Learner("SL.ksvm", tune = tune_svm_rbf_cup, detailed_names = TRUE,
                                      name_prefix = "ksvm")
 # modelli per ridge e lasso
-tune_glmenet_cup_0.1 = list(alpha = 0.1, nlambda = c(80, 20, 50), useMin = TRUE)
+tune_glmenet_cup_0.1 = list(alpha = 0.1, nlambda = c(80, 20, 50, 90), useMin = TRUE)
 learner_glmnet_cup_0.1 = create.Learner("SL.glmnet", tune = tune_glmenet_cup_0.1, detailed_names = TRUE,
                                     name_prefix = "glmnet" )
 tune_glmenet_cup_0.6 = list(alpha = 0.6, nlambda = c(20, 60), useMin = TRUE)
@@ -44,23 +41,26 @@ learner_glmnet_cup_0.3 = create.Learner("SL.glmnet", tune = tune_glmenet_cup_0.3
                                         name_prefix = "glmnet" )
 
 #input1
-set.seed(121)
+set.seed(33)
 sl_cup_1_best <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,family = gaussian(),
-                                   SL.library = c(learner_ranger_cup2mtry$names, learner_ranger_cup_3mtry$names,
+                                   SL.library = c(learner_ranger_cup2mtry$names,
                                                   learner_svm_rbf_cup$names,
-                                                  learner_glmnet_cup_0.1$names, learner_glmnet_cup_0.6$names, learner_glmnet_cup_0.6$names),
+                                                  learner_glmnet_cup_0.1$names, learner_glmnet_cup_0.6$names, learner_glmnet_cup_0.3$names),
                                    verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 
 sl_cup_1_best
+val = data.frame(sl_cup_1_best$coef,sl_cup_1_best$cvRisk,sl_cup_1_best$times$train[3])
+write.csv(val,file = "SL_finali/sl_cup_1_best.csv")
 #input2
-set.seed(121)
+set.seed(33)
 sl_cup_2_best <- SuperLearner(Y = train_output_2_cup, X = train_input_cup, family = gaussian(),
-                                   SL.library = c(learner_ranger_cup2mtry$names, learner_ranger_cup_3mtry$names,
+                                   SL.library = c(learner_ranger_cup2mtry$names,
                                                   learner_svm_rbf_cup$names,
-                                                  learner_glmnet_cup_0.1$names, learner_glmnet_cup_0.6$names, learner_glmnet_cup_0.6$names),
+                                                  learner_glmnet_cup_0.1$names, learner_glmnet_cup_0.6$names, learner_glmnet_cup_0.3$names),
                                    verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_2_best
-
+val = data.frame(sl_cup_2_best$coef,sl_cup_2_best$cvRisk,sl_cup_2_best$times$train[3])
+write.csv(val,file = "SL_finali/sl_cup_2_best.csv")
 ### previsioni TEST SET, non necessario se passiamo a Superlearner newX
 pred_cup_1 = predict.SuperLearner(object = sl_cup_1_best, newdata = test_input_cup, onlySL = TRUE)
 pred_cup_2 = predict.SuperLearner(object = sl_cup_2_best, newdata = test_input_cup, onlySL = TRUE)

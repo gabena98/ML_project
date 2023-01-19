@@ -18,15 +18,13 @@ train_output_2_cup = cup_train[split_id_cup$train, 11]
 test_input_cup = cup_train[split_id_cup$test, c(-10, -11)]
 test_output_1_cup = cup_train[split_id_cup$test,10]
 test_output_2_cup = cup_train[split_id_cup$test,11]
-#Superlearner
+#Superlearner 
 
 # modelli per random forest
-tune_ranger_cup = list(num.trees = c(150,250,500, 1000, 2000, 2500), mtry = c(2,3,4))
+tune_ranger_cup = list(num.trees = c(150,250, 350, 500, 1000, 2000, 2500), mtry = c(2,3,4,ncol(train_input_cup)))
 learner_ranger_cup = create.Learner("SL.ranger", tune = tune_ranger_cup, detailed_names = TRUE,
                                     name_prefix = "ranger")
-tune_ranger_350_9_cup = list(num.trees = 350, mtry = ncol(train_input_cup))
-learner_ranger_350_9_cup = create.Learner("SL.ranger", tune = tune_ranger_350_9_cup, detailed_names = TRUE,
-                                          name_prefix = "ranger")
+                                    
 # modelli per ksvm
 tune_svm_rbf_cup = list(kernel = "rbfdot", sigma = c(2.5, 0.01,0.2,0.5), C = c(0.1, 0.7,5,10,1000))
 learner_svm_rbf_cup = create.Learner("SL.ksvm", tune = tune_svm_rbf_cup, detailed_names = TRUE,
@@ -37,16 +35,16 @@ learner_glmnet_cup = create.Learner("SL.glmnet", tune = tune_glmenet_cup, detail
                                     name_prefix = "glmnet" )
 
 #input1
-set.seed(121)
+set.seed(33)
 sl_cup_1_final <- SuperLearner(Y = train_output_1_cup, X = train_input_cup,family = gaussian(),
-                         SL.library = c(learner_ranger_cup$names, learner_ranger_350_9_cup$names ,learner_svm_rbf_cup$names, learner_glmnet_cup$names),
+                         SL.library = c(learner_ranger_cup$names ,learner_svm_rbf_cup$names, learner_glmnet_cup$names),
                          verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 
 sl_cup_1_final
 #input2
-set.seed(121)
+set.seed(33)
 sl_cup_2_final <- SuperLearner(Y = train_output_2_cup, X = train_input_cup, family = gaussian(),
-                         SL.library = c(learner_ranger_cup$names, learner_ranger_350_9_cup$names, learner_svm_rbf_cup$names, learner_glmnet_cup$names),
+                         SL.library = c(learner_ranger_cup$names, learner_svm_rbf_cup$names, learner_glmnet_cup$names),
                          verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_2_final
 
