@@ -51,7 +51,7 @@ sl_cup_1_best = SuperLearner(Y = train_output_1_cup, X = train_input_cup,family 
 
 sl_cup_1_best
 val = data.frame(sl_cup_1_best$coef, sl_cup_1_best$cvRisk, sl_cup_1_best$times$train[3])
-write.csv(val,file = "SL_finali/sl_cup_1_best.csv")
+write.csv(val,file = "final_SL_results/sl_cup_1_best.csv")
 #input2
 set.seed(33)
 sl_cup_2_best = SuperLearner(Y = train_output_2_cup, X = train_input_cup, family = gaussian(),
@@ -61,7 +61,7 @@ sl_cup_2_best = SuperLearner(Y = train_output_2_cup, X = train_input_cup, family
                                    verbose = TRUE, cvControl = list(10, FALSE), control = list(TRUE, TRUE))
 sl_cup_2_best
 val = data.frame(sl_cup_2_best$coef, sl_cup_2_best$cvRisk, sl_cup_2_best$times$train[3])
-write.csv(val,file = "SL_finali/sl_cup_2_best.csv")
+write.csv(val,file = "final_SL_results/sl_cup_2_best.csv")
 ### previsioni TEST SET
 pred_cup_1 = predict.SuperLearner(object = sl_cup_1_best, newdata = test_input_cup, onlySL = TRUE)
 pred_cup_2 = predict.SuperLearner(object = sl_cup_2_best, newdata = test_input_cup, onlySL = TRUE)
@@ -89,6 +89,6 @@ blind_cup_test = blind_cup_test[,-1]
 pred_blind_cup_1 = predict.SuperLearner(object = sl_cup_1_best, newdata = blind_cup_test, onlySL = TRUE)
 pred_blind_cup_2 = predict.SuperLearner(object = sl_cup_2_best, newdata = blind_cup_test, onlySL = TRUE)
 value = data.frame(pred_blind_cup_1$pred, pred_blind_cup_2$pred)
-write.csv(value, file = "SL_finali/ensemble_team_ML-CUP22.csv")
+write.csv(value, file = "./ensemble_team_ML-CUP22.csv")
 
 #a = "# Name1  Surname1	Name2 Surname2\n# Team Name\n# ML-CUP22\n# Submission Date (e.g. 20/11/2022)"
