@@ -81,3 +81,13 @@ training_mean_euclidean_error_v2(sl_cup_1_best, sl_cup_2_best)
 validation_mean_euclidean_error(sl_cup_1_best, sl_cup_2_best)
 # MEE sul test set
 mean_euclidean_error(pred_cup_1$pred, test_output_1_cup, pred_cup_2$pred, test_output_2_cup)
+
+### Predizioni BLIND-TEST
+blind_cup_test = read.csv("./CUP/ML-CUP22-TS_noHeader.csv", header = FALSE)
+blind_cup_test = blind_cup_test[,-1]
+pred_blind_cup_1 = predict.SuperLearner(object = sl_cup_1_best, newdata = blind_cup_test, onlySL = TRUE)
+pred_blind_cup_2 = predict.SuperLearner(object = sl_cup_2_best, newdata = blind_cup_test, onlySL = TRUE)
+value = data.frame(pred_blind_cup_1$pred,pred_blind_cup_2$pred)
+write.csv(value,file = "SL_finali/ensemble_team_ML-CUP22.csv")
+
+#a = "# Name1  Surname1	Name2 Surname2\n# Team Name\n# ML-CUP22\n# Submission Date (e.g. 20/11/2022)"
