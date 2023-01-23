@@ -77,9 +77,9 @@ accuracy1
 accuracy2
 
 # MEE sul training set
-training_mean_euclidean_error_v2(sl_cup_1_best, sl_cup_2_best)
+training_mean_euclidean_error_v2(sl_cup_1_best, sl_cup_2_best, train_output_1_cup, train_output_2_cup, train_input_cup)
 # MEE sul validation set
-validation_mean_euclidean_error(sl_cup_1_best, sl_cup_2_best)
+validation_mean_euclidean_error(sl_cup_1_best, sl_cup_2_best, train_output_1_cup, train_output_2_cup, train_input_cup)
 # MEE sul test set
 mean_euclidean_error(pred_cup_1$pred, test_output_1_cup, pred_cup_2$pred, test_output_2_cup)
 

@@ -72,8 +72,8 @@ mse2_final = MSE(pred_cup_2_final$pred, test_output_2_cup)
 mse2_final
 
 # MEE sul training set
-training_mean_euclidean_error_v2(sl_cup_1_final, sl_cup_2_final)
+training_mean_euclidean_error_v2(sl_cup_1_final, sl_cup_2_final, train_output_1_cup, train_output_2_cup, train_input_cup)
 # MEE sul validation set
-validation_mean_euclidean_error(sl_cup_1_final, sl_cup_2_final)
+validation_mean_euclidean_error(sl_cup_1_final, sl_cup_2_final, train_output_1_cup, train_output_2_cup, train_input_cup)
 # MEE sul test set
 mean_euclidean_error(pred_cup_1_final$pred, test_output_1_cup, pred_cup_2_final$pred, test_output_2_cup)

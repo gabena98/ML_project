@@ -116,14 +116,10 @@ accuracy_gmlnet_1
 accuracy_gmlnet_2
 
 # MEE sul training set
-training_mean_euclidean_error_v2(sl_cup_ranger_1, sl_cup_ranger_2)
-training_mean_euclidean_error_v2(sl_cup_svm_1, sl_cup_svm_2)
-training_mean_euclidean_error_v2(sl_cup_glmnet_1, sl_cup_glmnet_2)
+training_mean_euclidean_error_v2(sl_cup_ranger_1, sl_cup_ranger_2, train_output_1_cup, train_output_2_cup, train_input_cup)
+training_mean_euclidean_error_v2(sl_cup_svm_1, sl_cup_svm_2, train_output_1_cup, train_output_2_cup, train_input_cup)
+training_mean_euclidean_error_v2(sl_cup_glmnet_1, sl_cup_glmnet_2, train_output_1_cup, train_output_2_cup, train_input_cup)
 # MEE sul validation set
-validation_mean_euclidean_error(sl_cup_ranger_1, sl_cup_ranger_2)
-validation_mean_euclidean_error(sl_cup_svm_1, sl_cup_svm_2)
-validation_mean_euclidean_error(sl_cup_glmnet_1, sl_cup_glmnet_2)
-# MEE sul test set
-mean_euclidean_error(pred_cup_ranger_1$pred, test_output_1_cup, pred_cup_ranger_2$pred, test_output_2_cup)
-mean_euclidean_error(pred_cup_svm_1$pred, test_output_1_cup, pred_cup_svm_2$pred, test_output_2_cup)
-mean_euclidean_error(pred_cup_gmlnet_1$pred, test_output_1_cup, pred_cup_gmlnet_2$pred, test_output_2_cup)
+validation_mean_euclidean_error(sl_cup_ranger_1, sl_cup_ranger_2, train_output_1_cup, train_output_2_cup, train_input_cup)
+validation_mean_euclidean_error(sl_cup_svm_1, sl_cup_svm_2, train_output_1_cup, train_output_2_cup, train_input_cup)
+validation_mean_euclidean_error(sl_cup_glmnet_1, sl_cup_glmnet_2, train_output_1_cup, train_output_2_cup, train_input_cup)
